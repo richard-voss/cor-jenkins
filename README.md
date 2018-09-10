@@ -37,7 +37,8 @@ It is built to support the following process:
 1. Apply that version and execute whatever the build does
 1. On Success, tag the current commit with that version (and push the tag)
 
-Incrementing the version is based on the rules of [semantic versioning](https://semver.org/).
+Incrementing the version is based on the rules of [semantic versioning](https://semver.org/),
+as implemented by [Java SemVer]()https://github.com/zafarkhaja/jsemver).
 
 ## Continuous Release means...
 
