@@ -116,7 +116,7 @@ public class VersionCalculator {
   }
 
   public String getGitNextTagCommand() {
-    return "tag " + prefixed(getNextVersion());
+    return "tag -a " + prefixed(getNextVersion());
   }
 
   public List<Pattern> getTriggerMinorChange() {
