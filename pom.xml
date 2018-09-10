@@ -8,6 +8,36 @@
   <artifactId>cor-jenkins</artifactId>
   <version>0.1.0-SNAPSHOT.0</version>
 
+
+  <name>Continuous Release for Jenkins</name>
+  <description>Utilities for Continuous Releasing from Jenkins Pipelines</description>
+  <url>https://github.com/richard-voss/cor-jenkins</url>
+
+  <issueManagement>
+    <url>https://github.com/richard-voss/cor-jenkins/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/richard-voss/cor-jenkins</url>
+    <connection>scm:git:git://github.com/richard-voss/cor-jenkins.git</connection>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>Richard Voß</name>
+      <url>https://github.com/richard-voss</url>
+    </developer>
+  </developers>
+
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>

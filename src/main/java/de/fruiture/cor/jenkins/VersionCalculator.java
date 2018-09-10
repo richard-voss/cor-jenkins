@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 public class VersionCalculator {
 
+  public static final Version START = Version.forIntegers(0);
+
   public static VersionCalculator snapshot(String prefix) {
     return new VersionCalculator(new VersioningStrategy.Snapshot(), prefix);
   }
@@ -71,7 +73,7 @@ public class VersionCalculator {
   }
 
   private Version getBaseline() {
-    return lastRelease().orElse(Version.forIntegers(0));
+    return lastRelease().orElse(START);
   }
 
   private Optional<Version> lastSnap(Version baseline) {
@@ -88,7 +90,13 @@ public class VersionCalculator {
   }
 
   public Optional<String> getReferenceTag() {
-    return lastRelease().map(r -> lastSnap(r).orElse(r)).map(Version::toString).map(this::prefixed);
+    Optional<Version> best = lastRelease().map(r -> lastSnap(r).orElse(r)).;
+
+    if (!best.isPresent()) {
+      best = lastSnap(START);
+    }
+
+    return best.map(Version::toString).map(this::prefixed);
   }
 
   public void messages(String messages) {
