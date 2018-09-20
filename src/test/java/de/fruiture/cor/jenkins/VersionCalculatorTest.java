@@ -11,7 +11,7 @@ class VersionCalculatorTest {
   @Test
   void gitCommands() {
 
-    VersionCalculator vc = VersionCalculator.snapshot("rel");
+    VersionCalculator vc = VersionCalculator.snapshot("rel-");
 
     assertThat(vc.getGitFindTagsCommand(), is("tag --merged -l 'rel-*'"));
     vc.tags("");
@@ -19,7 +19,7 @@ class VersionCalculatorTest {
     vc.messages("@CHANGE:MINOR bla");
     assertThat(vc.getGitNextTagCommand(), is("tag -a rel-0.1.0-SNAPSHOT.0"));
 
-    vc = VersionCalculator.snapshot("rel");
+    vc = VersionCalculator.snapshot("rel-");
 
     assertThat(vc.getGitFindTagsCommand(), is("tag --merged -l 'rel-*'"));
     vc.tags("rel-0.1.0-SNAPSHOT.0");
@@ -27,7 +27,7 @@ class VersionCalculatorTest {
     vc.messages("@CHANGE:PATCH bla");
     assertThat(vc.getGitNextTagCommand(), is("tag -a rel-0.1.0-SNAPSHOT.1"));
 
-    vc = VersionCalculator.release("rel");
+    vc = VersionCalculator.release("rel-");
 
     assertThat(vc.getGitFindTagsCommand(), is("tag --merged -l 'rel-*'"));
     vc.tags("rel-0.1.0-SNAPSHOT.0 rel-0.1.0-SNAPSHOT.1");
@@ -65,19 +65,19 @@ class VersionCalculatorTest {
 
     @Test
     void detectPatchLevelChanges() {
-      detector.messages("just @CHANGE:PATCH bla bla");
+      detector.messages("just CHANGE:PATCH bla bla");
       assertThat(detector.getNextVersion(), is("1.2.4-SNAPSHOT.1"));
     }
 
     @Test
     void detectMinorLevelChanges() {
-      detector.messages("just @CHANGE:MINOR bla bla");
+      detector.messages("just CHANGE:MINOR bla bla");
       assertThat(detector.getNextVersion(), is("1.3.0-SNAPSHOT.0"));
     }
 
     @Test
     void detectMajorLevelChanges() {
-      detector.messages("just @CHANGE:MAJOR  bla @CHANGE:PATCH bla");
+      detector.messages("just CHANGE:MAJOR  bla @CHANGE:PATCH bla");
       assertThat(detector.getNextVersion(), is("2.0.0-SNAPSHOT.0"));
     }
   }

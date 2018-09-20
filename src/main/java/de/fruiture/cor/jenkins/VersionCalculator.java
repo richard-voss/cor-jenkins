@@ -42,9 +42,7 @@ public class VersionCalculator {
   public VersionCalculator(VersioningStrategy strategy, String prefix) {
     this.prefix = prefix;
     this.strategy = strategy;
-    if (prefix != null) {
-      assert prefix.matches("^\\w+$");
-    }
+    assert prefix == null || prefix.matches("^[\\w_\\-.]+$");
   }
 
   public VersionCalculator(VersioningStrategy strategy) {
@@ -54,7 +52,7 @@ public class VersionCalculator {
   void tags(String foundGitTags) {
     Pattern p =
         prefix != null
-            ? Pattern.compile(prefix + "-(\\d+.\\d+\\.\\d+\\S*)")
+            ? Pattern.compile(Pattern.quote(prefix) + "(\\d+.\\d+\\.\\d+\\S*)")
             : Pattern.compile("(\\d+.\\d+\\.\\d+\\S*)");
 
     Matcher matcher = p.matcher(foundGitTags);
@@ -69,31 +67,31 @@ public class VersionCalculator {
   }
 
   private Optional<Version> lastRelease() {
-    return versions.stream().filter(VersioningStrategy::isRelease).reduce((a, b) -> b);
+    return versions.stream().filter(VersioningStrategy::isRelease).reduce(VersionCalculator::last);
   }
 
   private Version getBaseline() {
     return lastRelease().orElse(START);
   }
 
-  private Optional<Version> lastSnap(Version baseline) {
+  private Optional<Version> lastSnapAfter(Version baseline) {
     return versions
         .stream()
         .filter(VersioningStrategy::isSnapshot)
         .filter(v -> v.greaterThan(baseline))
-        .reduce((a, b) -> b);
+        .reduce(VersionCalculator::last);
   }
 
   public String getNextVersion() {
     Version baseline = getBaseline();
-    return strategy.getNextVersion(baseline, lastSnap(baseline).orElse(null)).toString();
+    return strategy.getNextVersion(baseline, lastSnapAfter(baseline).orElse(null)).toString();
   }
 
   public Optional<String> getReferenceTag() {
-    Optional<Version> best = lastRelease().map(r -> lastSnap(r).orElse(r)).;
+    Optional<Version> best = lastRelease().map(r -> lastSnapAfter(r).orElse(r));
 
     if (!best.isPresent()) {
-      best = lastSnap(START);
+      best = lastSnapAfter(START);
     }
 
     return best.map(Version::toString).map(this::prefixed);
@@ -112,15 +110,19 @@ public class VersionCalculator {
   }
 
   private String prefixed(String v) {
-    return prefix != null ? prefix + "-" + v : v;
+    return prefix != null ? prefix + v : v;
   }
 
   public String getGitFindTagsCommand() {
-    return prefix != null ? "tag --merged -l '" + prefix + "-*'" : "tag --merged";
+    return prefix != null ? ("tag --merged -l '" + prefixed("*") + "'") : "tag --merged";
   }
 
   public String getGitLogCommand() {
-    return "log --pretty=oneline " + getReferenceTag().map(from -> from + "..HEAD").orElse("HEAD");
+    return "log --pretty=oneline " + getGitLogVersionRange();
+  }
+
+  public String getGitLogVersionRange() {
+    return getReferenceTag().map(from -> from + "..HEAD").orElse("HEAD");
   }
 
   public String getGitNextTagCommand() {
@@ -141,5 +143,9 @@ public class VersionCalculator {
 
   public void setTriggerMajorChange(List<Pattern> triggerMajorChange) {
     this.triggerMajorChange = triggerMajorChange;
+  }
+
+  private static <T> T last(T a, T b) {
+    return b;
   }
 }
