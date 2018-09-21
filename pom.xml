@@ -6,7 +6,7 @@
 
   <groupId>de.fruiture.cor</groupId>
   <artifactId>cor-jenkins</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
 
   <name>Continuous Release for Jenkins</name>
   <description>Utilities for Continuous Releasing from Jenkins Pipelines</description>
