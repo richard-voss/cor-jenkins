@@ -8,13 +8,14 @@ It rather computes the next reasonable version number in advance and allows to f
 into the remaining process. (Inspired by [Maven Release Plugin: Dead and Buried](https://axelfontaine.com/blog/dead-burried.html))
  
 ```groovy
+@Grab(group='de.fruiture.cor', module='cor-jenkins', version='1.0.0')
 import de.fruiture.cor.jenkins.VersionCalculator
 
 node {
   def vc = VersionCalculator.release()
    
   vc.tags(
-    sh(script: "git ${vc.gitTagCommand}", returnStdout: true)
+    sh(script: "git ${vc.gitFindTagsCommand}", returnStdout: true)
   )
   
   vc.messages(
@@ -86,14 +87,15 @@ the prefix will be ignored.
 Minor and major version number will only be incremented when certain
 keywords are found somewhere in the commit messages.
 
-By default `CHANGE:MINOR` triggers a minor version bump, and
+By default, the text `CHANGE:MINOR` triggers a minor version bump, and
 `CHANGE:MAJOR` triggers a major version bump.
 
-You can change these by specifying list of regular expressions:
+You can change these by specifying lists of regular expressions:
 
 ```groovy
-vc.triggerMinorChange = [/compatible API change/]
-vc.triggerMajorChange = [/breaking API change/]
+import java.util.regex.Pattern
+vc.triggerMinorChange = [Pattern.compile(/minor API change/)]
+vc.triggerMajorChange = [Pattern.compile(/breaking API change/)]
 ```
 
 ### Commit messages
@@ -103,4 +105,18 @@ You can, however, perform any other command to obtain the text to search for key
 
 Use `vc.gitLogVersionRange` to get the correct range expression.
 
+### Why `-SNAPSHOT.N` and not just `-SNAPSHOT`
 
+The `VersionCalculator.snapshot()` strategy is intended to create unique release
+numbers, too, according to the rules of [semantic versioning](https://semver.org/).
+If it created an unnumbered snapshot version, the tag would not be unique and the whole
+process wouldn't work.
+
+If you intend to do "classic" volatile `-SNAPSHOT` releases, the approach would
+rather be to use the `VersionCalculator.release()` strategy, append the suffix `-SNAPSHOT`
+yourself _and not tag_ the commit (or _move the tag_ and force push).
+You can still install/deploy the artifacts to any repository independent of tagging.
+
+The next build would then compute the version again from the last full release.
+That would either compute the same next version (and thus the same SNAPSHOT)
+ or a higher version one due to change keywords.
