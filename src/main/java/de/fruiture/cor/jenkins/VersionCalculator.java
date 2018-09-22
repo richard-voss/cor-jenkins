@@ -1,6 +1,6 @@
 package de.fruiture.cor.jenkins;
 
-import com.github.zafarkhaja.semver.Version;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -9,9 +9,9 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VersionCalculator {
+public class VersionCalculator implements Serializable {
 
-  public static final Version START = Version.forIntegers(0);
+  public static final Version START = new Version("0.0.0");
 
   public static VersionCalculator snapshot(String prefix) {
     return new VersionCalculator(new VersioningStrategy.Snapshot(), prefix);
@@ -59,7 +59,7 @@ public class VersionCalculator {
     while (matcher.find()) {
       String v = matcher.group(1);
       try {
-        versions.add(Version.valueOf(v));
+        versions.add(new Version(v));
       } catch (Exception ignored) {
         // ignore
       }
@@ -67,7 +67,7 @@ public class VersionCalculator {
   }
 
   private Optional<Version> lastRelease() {
-    return versions.stream().filter(VersioningStrategy::isRelease).reduce(VersionCalculator::last);
+    return versions.stream().filter(Version::isRelease).reduce(VersionCalculator::last);
   }
 
   private Version getBaseline() {
@@ -77,7 +77,7 @@ public class VersionCalculator {
   private Optional<Version> lastSnapAfter(Version baseline) {
     return versions
         .stream()
-        .filter(VersioningStrategy::isSnapshot)
+        .filter(Version::isSnapshot)
         .filter(v -> v.greaterThan(baseline))
         .reduce(VersionCalculator::last);
   }

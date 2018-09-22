@@ -1,16 +1,8 @@
 package de.fruiture.cor.jenkins;
 
-import com.github.zafarkhaja.semver.Version;
+import java.io.Serializable;
 
-public abstract class VersioningStrategy {
-  public static boolean isRelease(Version v) {
-    return v.getPreReleaseVersion().isEmpty();
-  }
-
-  public static boolean isSnapshot(Version v) {
-    return !v.getPreReleaseVersion().isEmpty();
-  }
-
+public abstract class VersioningStrategy implements Serializable {
   enum Change {
     PATCH,
     MINOR,
@@ -51,8 +43,7 @@ public abstract class VersioningStrategy {
       }
 
       if (lastSnapshot != null) {
-        Version snapRelease =
-            new Version.Builder().setNormalVersion(lastSnapshot.getNormalVersion()).build();
+        Version snapRelease = lastSnapshot.getNormalVersion();
 
         if (snapRelease.greaterThanOrEqualTo(relMin)) {
           return snapRelease;
