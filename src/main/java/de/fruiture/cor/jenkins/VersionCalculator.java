@@ -126,7 +126,7 @@ public class VersionCalculator implements Serializable {
   }
 
   public String getGitNextTagCommand() {
-    return "tag -a " + prefixed(getNextVersion());
+    return "tag " + prefixed(getNextVersion());
   }
 
   public List<Pattern> getTriggerMinorChange() {
