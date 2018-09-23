@@ -14,7 +14,7 @@ way to add this to Jenkins and a more convenient scripting interface
 library 'cor-jenkins-lib'
 
 node {
-  def vc = cor.release()
+  def vc = cor.release(this).newCalculator()
    
   vc.tags(
     sh(script: "git ${vc.gitFindTagsCommand}", returnStdout: true)
