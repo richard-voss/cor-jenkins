@@ -8,7 +8,7 @@ It rather computes the next reasonable version number in advance and allows to f
 into the remaining process. (Inspired by [Maven Release Plugin: Dead and Buried](https://axelfontaine.com/blog/dead-burried.html))
 
 See [cor-jenkins-lib](https://github.com/richard-voss/cor-jenkins-lib) for the easiest
-way to add this to Jenkins.
+way to add this to Jenkins and a more convenient scripting interface
 
 ```groovy
 library 'cor-jenkins-lib'
@@ -31,7 +31,7 @@ node {
   sh("mvn clean verify")
   
   sh("git ${vc.gitNextTagCommand}")
-  sh("git push --tags")
+  sh("git ${vc.gitPushTagCommand}")
 }
 ```
 
