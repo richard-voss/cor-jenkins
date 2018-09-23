@@ -6,7 +6,7 @@
 
   <groupId>de.fruiture.cor</groupId>
   <artifactId>cor-jenkins</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
 
   <name>Continuous Release for Jenkins</name>
   <description>Utilities for Continuous Releasing from Jenkins Pipelines</description>
@@ -138,7 +138,7 @@
         <configuration>
           <serverId>ossrh</serverId>
           <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>false</autoReleaseAfterClose>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
     </plugins>
