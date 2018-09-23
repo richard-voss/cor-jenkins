@@ -83,11 +83,6 @@ public class VersionCalculator implements Serializable {
         .reduce(VersionCalculator::last);
   }
 
-  public String getNextVersion() {
-    Version baseline = getBaseline();
-    return strategy.getNextVersion(baseline, lastSnapAfter(baseline).orElse(null)).toString();
-  }
-
   public Optional<String> getReferenceTag() {
     Optional<Version> best = lastRelease().map(r -> lastSnapAfter(r).orElse(r));
 
@@ -96,6 +91,11 @@ public class VersionCalculator implements Serializable {
     }
 
     return best.map(Version::toString).map(this::prefixed);
+  }
+
+  public String getNextVersion() {
+    Version baseline = getBaseline();
+    return strategy.getNextVersion(baseline, lastSnapAfter(baseline).orElse(null)).toString();
   }
 
   public void messages(String messages) {
@@ -129,7 +129,11 @@ public class VersionCalculator implements Serializable {
   }
 
   public String getGitNextTagCommand() {
-    return "tag " + prefixed(getNextVersion());
+    return "tag " + getNextVersionTag();
+  }
+
+  public String getNextVersionTag() {
+    return prefixed(getNextVersion());
   }
 
   public List<Pattern> getTriggerMinorChange() {
