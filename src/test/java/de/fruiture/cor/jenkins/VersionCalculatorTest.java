@@ -19,7 +19,8 @@ class VersionCalculatorTest {
     assertThat(vc.getGitLogCommand(), is("log --pretty=oneline HEAD"));
     vc.messages("CHANGE:MINOR bla");
     assertThat(vc.getNextVersion(), is("0.1.0-SNAPSHOT.0"));
-    assertThat(vc.getGitNextTagCommand(), is("tag rel-0.1.0-SNAPSHOT.0"));
+    assertThat(vc.getGitNextTagCommand(), is("tag -am 'Release 0.1.0-SNAPSHOT.0' rel-0.1.0-SNAPSHOT.0"));
+    assertThat(vc.getGitPushTagCommand(), is("push origin rel-0.1.0-SNAPSHOT.0"));
 
     vc = VersionCalculator.snapshot("rel-");
 
@@ -28,7 +29,7 @@ class VersionCalculatorTest {
     assertThat(vc.getGitLogCommand(), is("log --pretty=oneline rel-0.1.0-SNAPSHOT.0..HEAD"));
     vc.messages("CHANGE:PATCH bla");
     assertThat(vc.getNextVersion(), is("0.1.0-SNAPSHOT.1"));
-    assertThat(vc.getGitNextTagCommand(), is("tag rel-0.1.0-SNAPSHOT.1"));
+    assertThat(vc.getGitNextTagCommand(), is("tag -am 'Release 0.1.0-SNAPSHOT.1' rel-0.1.0-SNAPSHOT.1"));
 
     vc = VersionCalculator.release("rel-");
 
@@ -37,7 +38,7 @@ class VersionCalculatorTest {
     assertThat(vc.getGitLogCommand(), is("log --pretty=oneline rel-0.1.0-SNAPSHOT.1..HEAD"));
     vc.messages("CHANGE:PATCH bla");
     assertThat(vc.getNextVersion(), is("0.1.0"));
-    assertThat(vc.getGitNextTagCommand(), is("tag rel-0.1.0"));
+    assertThat(vc.getGitNextTagCommand(), is("tag -am 'Release 0.1.0' rel-0.1.0"));
   }
 
   @Test
@@ -49,7 +50,7 @@ class VersionCalculatorTest {
     c1.tags("");
     assertThat(c1.getGitLogCommand(), is("log --pretty=oneline HEAD"));
     c1.messages("CHANGE:MINOR bla");
-    assertThat(c1.getGitNextTagCommand(), is("tag 0.1.0-SNAPSHOT.0"));
+    assertThat(c1.getGitNextTagCommand(), is("tag -am 'Release 0.1.0-SNAPSHOT.0' 0.1.0-SNAPSHOT.0"));
   }
 
   static class ChangeDetectionTest {

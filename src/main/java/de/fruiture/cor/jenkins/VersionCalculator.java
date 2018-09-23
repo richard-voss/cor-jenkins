@@ -129,7 +129,11 @@ public class VersionCalculator implements Serializable {
   }
 
   public String getGitNextTagCommand() {
-    return "tag " + getNextVersionTag();
+    return "tag -am 'Release " + getNextVersion() + "' " + getNextVersionTag();
+  }
+
+  public String getGitPushTagCommand() {
+    return "push origin " + getNextVersionTag();
   }
 
   public String getNextVersionTag() {
