@@ -53,7 +53,12 @@ public class Version implements Comparable<Version>, Serializable {
   }
 
   public Version incrementPreReleaseVersion() {
-    return new Version(_version.incrementPreReleaseVersion());
+    // the implementation of incrementPreReleaseVersion is broken,
+    // because it CHANGES the object it is called upon...
+    // That's why we perform another copy here
+    com.github.zafarkhaja.semver.Version _copy = com.github.zafarkhaja.semver.Version.valueOf(text);
+
+    return new Version(_copy.incrementPreReleaseVersion());
   }
 
   public int getMajorVersion() {

@@ -114,7 +114,9 @@ public class VersionCalculator implements Serializable {
   }
 
   public String getGitFindTagsCommand() {
-    return prefix != null ? ("tag --merged -l '" + prefixed("*") + "'") : "tag --merged";
+    return prefix != null
+        ? ("tag -l --merged HEAD '" + prefixed("*") + "'")
+        : "tag -l --merged HEAD";
   }
 
   public String getGitLogCommand() {
