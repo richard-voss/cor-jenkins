@@ -7,12 +7,14 @@ The approach completely agnostic of what the actual build does.
 It rather computes the next reasonable version number in advance and allows to feed it as parameter
 into the remaining process. (Inspired by [Maven Release Plugin: Dead and Buried](https://axelfontaine.com/blog/dead-burried.html))
 
+See [cor-jenkins-lib](https://github.com/richard-voss/cor-jenkins-lib) for the easiest
+way to add this to Jenkins.
+
 ```groovy
-@Grab(group='de.fruiture.cor', module='cor-jenkins', version='1.0.1')
-import de.fruiture.cor.jenkins.VersionCalculator
+library 'cor-jenkins-lib'
 
 node {
-  def vc = VersionCalculator.release()
+  def vc = cor.release()
    
   vc.tags(
     sh(script: "git ${vc.gitFindTagsCommand}", returnStdout: true)
