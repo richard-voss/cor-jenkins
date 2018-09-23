@@ -8,6 +8,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class VersionCalculator implements Serializable {
 
@@ -135,16 +136,30 @@ public class VersionCalculator implements Serializable {
     return triggerMinorChange;
   }
 
-  public void setTriggerMinorChange(List<Pattern> triggerMinorChange) {
-    this.triggerMinorChange = triggerMinorChange;
+  public void setTriggerMinorChange(List<?> triggerMinorChange) {
+    this.triggerMinorChange = patterns(triggerMinorChange);
+  }
+
+  private static List<Pattern> patterns(List<?> rawList) {
+    return rawList
+        .stream()
+        .map(
+            o -> {
+              if (o instanceof Pattern) {
+                return (Pattern) o;
+              } else {
+                return Pattern.compile(o.toString());
+              }
+            })
+        .collect(Collectors.toList());
   }
 
   public List<Pattern> getTriggerMajorChange() {
     return triggerMajorChange;
   }
 
-  public void setTriggerMajorChange(List<Pattern> triggerMajorChange) {
-    this.triggerMajorChange = triggerMajorChange;
+  public void setTriggerMajorChange(List<?> triggerMajorChange) {
+    this.triggerMajorChange = patterns(triggerMajorChange);
   }
 
   private static <T> T last(T a, T b) {

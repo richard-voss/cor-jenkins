@@ -3,6 +3,7 @@ package de.fruiture.cor.jenkins;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ class VersionCalculatorTest {
     assertThat(vc.getGitFindTagsCommand(), is("tag -l --merged HEAD 'rel-*'"));
     vc.tags("");
     assertThat(vc.getGitLogCommand(), is("log --pretty=oneline HEAD"));
-    vc.messages("@CHANGE:MINOR bla");
+    vc.messages("CHANGE:MINOR bla");
     assertThat(vc.getNextVersion(), is("0.1.0-SNAPSHOT.0"));
     assertThat(vc.getGitNextTagCommand(), is("tag rel-0.1.0-SNAPSHOT.0"));
 
@@ -25,7 +26,7 @@ class VersionCalculatorTest {
     assertThat(vc.getGitFindTagsCommand(), is("tag -l --merged HEAD 'rel-*'"));
     vc.tags("rel-0.1.0-SNAPSHOT.0");
     assertThat(vc.getGitLogCommand(), is("log --pretty=oneline rel-0.1.0-SNAPSHOT.0..HEAD"));
-    vc.messages("@CHANGE:PATCH bla");
+    vc.messages("CHANGE:PATCH bla");
     assertThat(vc.getNextVersion(), is("0.1.0-SNAPSHOT.1"));
     assertThat(vc.getGitNextTagCommand(), is("tag rel-0.1.0-SNAPSHOT.1"));
 
@@ -34,7 +35,7 @@ class VersionCalculatorTest {
     assertThat(vc.getGitFindTagsCommand(), is("tag -l --merged HEAD 'rel-*'"));
     vc.tags("rel-0.1.0-SNAPSHOT.0 rel-0.1.0-SNAPSHOT.1");
     assertThat(vc.getGitLogCommand(), is("log --pretty=oneline rel-0.1.0-SNAPSHOT.1..HEAD"));
-    vc.messages("@CHANGE:PATCH bla");
+    vc.messages("CHANGE:PATCH bla");
     assertThat(vc.getNextVersion(), is("0.1.0"));
     assertThat(vc.getGitNextTagCommand(), is("tag rel-0.1.0"));
   }
@@ -47,7 +48,7 @@ class VersionCalculatorTest {
     assertThat(c1.getGitFindTagsCommand(), is("tag -l --merged HEAD"));
     c1.tags("");
     assertThat(c1.getGitLogCommand(), is("log --pretty=oneline HEAD"));
-    c1.messages("@CHANGE:MINOR bla");
+    c1.messages("CHANGE:MINOR bla");
     assertThat(c1.getGitNextTagCommand(), is("tag 0.1.0-SNAPSHOT.0"));
   }
 
@@ -74,13 +75,15 @@ class VersionCalculatorTest {
 
     @Test
     void detectMinorLevelChanges() {
-      detector.messages("just CHANGE:MINOR bla bla");
+      detector.setTriggerMinorChange(Arrays.asList("fo[ox]", "bar"));
+      detector.messages("just fox");
       assertThat(detector.getNextVersion(), is("1.3.0-SNAPSHOT.0"));
     }
 
     @Test
     void detectMajorLevelChanges() {
-      detector.messages("just CHANGE:MAJOR  bla @CHANGE:PATCH bla");
+      detector.setTriggerMajorChange(Arrays.asList("ma[jJ].r", "bogus"));
+      detector.messages("just major changes");
       assertThat(detector.getNextVersion(), is("2.0.0-SNAPSHOT.0"));
     }
   }
