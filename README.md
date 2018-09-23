@@ -6,9 +6,9 @@ Allows releasing a reasonable next version number in a
 The approach completely agnostic of what the actual build does.
 It rather computes the next reasonable version number in advance and allows to feed it as parameter
 into the remaining process. (Inspired by [Maven Release Plugin: Dead and Buried](https://axelfontaine.com/blog/dead-burried.html))
- 
+
 ```groovy
-@Grab(group='de.fruiture.cor', module='cor-jenkins', version='1.0.0')
+@Grab(group='de.fruiture.cor', module='cor-jenkins', version='1.0.1')
 import de.fruiture.cor.jenkins.VersionCalculator
 
 node {
@@ -24,7 +24,7 @@ node {
   
   def version = vc.nextVersion
   
-  // the actual build ...
+  // the actual build, for example using maven
   sh("mvn versions:set -DnewVersion=${version} versions:commit")
   sh("mvn clean verify")
   
@@ -93,9 +93,8 @@ By default, the text `CHANGE:MINOR` triggers a minor version bump, and
 You can change these by specifying lists of regular expressions:
 
 ```groovy
-import java.util.regex.Pattern
-vc.triggerMinorChange = [Pattern.compile(/minor API change/)]
-vc.triggerMajorChange = [Pattern.compile(/breaking API change/)]
+vc.triggerMinorChange = [/minor API change/, /added functios/]
+vc.triggerMajorChange = [/breaking API change/, /incompatible/]
 ```
 
 ### Commit messages
